@@ -22,7 +22,7 @@ pipeline {
         ]) {
                 sh """
                     terraform init
-                    terraform plan -var-file=${params.ENVIRONMENT}.tfvars
+                    terraform plan --var-file=${params.ENVIRONMENT}.tfvars
                 """
             }
         }
