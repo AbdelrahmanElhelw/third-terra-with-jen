@@ -53,6 +53,17 @@ pipeline {
 
         always {
             echo 'Pipeline finished.'
+            emailext(
+            to: 'abdoelhelw5@gmail.com',
+            subject: "Build Result: ${currentBuild.currentResult}",
+            body: """
+            Job: ${env.JOB_NAME}
+            Build: #${env.BUILD_NUMBER}
+            Environment: ${params.ENVIRONMENT}
+            Result: ${currentBuild.currentResult}
+            """
+        )
+    }
         }
     }
 }
