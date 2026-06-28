@@ -13,10 +13,13 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'AWS_CRED'
-                ]]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'AWS',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+            )
+        ]) {
                 sh """
                     terraform init
                     terraform plan -var-file=${params.ENVIRONMENT}.tfvars
