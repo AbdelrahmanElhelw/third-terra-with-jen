@@ -26,6 +26,7 @@ pipeline {
                 """
             }
         }
+        }
 
         stage('Manual Approval') {
             steps {
@@ -55,4 +56,4 @@ pipeline {
         }
     }
 }
-}
+
