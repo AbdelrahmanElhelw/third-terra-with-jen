@@ -10,20 +10,26 @@ pipeline {
     }
 
     stages {
-        stage('Hello World') {
+
+        stage('Terraform Plan') {
             steps {
-                sh '''
-                terraform init
-                terraform plan --var-file ${params.ENVIRONMENT}.tfvars
-                echo "Hello World from trigger ${params.ENVIRONMENT}"
-                '''
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'AWS_CRED'
+                ]]) {
+                sh """
+                    terraform init
+                    terraform plan -var-file=${params.ENVIRONMENT}.tfvars
+                """
             }
         }
 
-        stage('Hello Jenkins') {
+        stage('Manual Approval') {
             steps {
-              
-                echo "Hello Jenkins from ${params.ENVIRONMENT}"
+                input(
+                    message: "Apply Terraform changes to ${params.ENVIRONMENT}?",
+                    ok: "Approve"
+                )
             }
         }
     }
@@ -32,8 +38,17 @@ pipeline {
         success {
             echo 'Pipeline completed successfully!'
         }
+
         failure {
             echo 'Pipeline failed!'
+        }
+
+        aborted {
+            echo 'Pipeline was aborted!'
+        }
+
+        always {
+            echo 'Pipeline finished.'
         }
     }
 }
